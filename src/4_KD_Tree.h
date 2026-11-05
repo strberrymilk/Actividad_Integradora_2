@@ -5,7 +5,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Cada nodo guarda una central y sus dos hijos.
+// cada nodo guarda una central y sus dos hijos
 struct NodoKD {
     int punto;
     int eje;
@@ -13,7 +13,7 @@ struct NodoKD {
     int derecho;
 };
 
-// Compara dos puntos utilizando el eje X o Y.
+// compara dos puntos utilizando el eje X o Y
 bool menorKD(int a, int b, int eje,
              const vector<pair<double, double>> &puntos) {
 
@@ -47,7 +47,7 @@ bool menorKD(int a, int b, int eje,
     return a < b;
 }
 
-// Ordena los puntos segun el eje utilizando Merge Sort.
+// ordena los puntos segun el eje utilizando Merge Sort
 void mergeSortKD(vector<int> &orden,
                  vector<int> &auxiliar,
                  int inicio,
@@ -98,7 +98,7 @@ void mergeSortKD(vector<int> &orden,
     }
 }
 
-// Construye el arbol alternando entre los ejes X y Y.
+// construye el arbol alternando entre los ejes X y Y
 int construirKD(const vector<pair<double, double>> &puntos,
                 vector<int> &orden,
                 vector<int> &auxiliar,
@@ -111,12 +111,12 @@ int construirKD(const vector<pair<double, double>> &puntos,
         return -1;
     }
 
-    // Eje 0 = X, eje 1 = Y.
+    // eje 0 = X, eje 1 = Y
     int eje = nivel % 2;
 
     mergeSortKD(orden, auxiliar, inicio, fin, eje, puntos);
 
-    // Seleccionar el punto central.
+    // seleccionar el punto central
     int mitad = (inicio + fin) / 2;
 
     NodoKD nuevo;
@@ -130,13 +130,13 @@ int construirKD(const vector<pair<double, double>> &puntos,
 
     arbol.push_back(nuevo);
 
-    // Construir el lado izquierdo.
+    // construir el lado izquierdo
     arbol[posicion].izquierdo = construirKD(
         puntos, orden, auxiliar, arbol,
         inicio, mitad, nivel + 1
     );
 
-    // Construir el lado derecho.
+    // construir el lado derecho
     arbol[posicion].derecho = construirKD(
         puntos, orden, auxiliar, arbol,
         mitad + 1, fin, nivel + 1
@@ -145,7 +145,7 @@ int construirKD(const vector<pair<double, double>> &puntos,
     return posicion;
 }
 
-// Calcula la distancia euclidiana al cuadrado.
+// calcula la distancia euclidiana al cuadrado
 double distanciaCuadradaKD(const pair<double, double> &a,
                           const pair<double, double> &b) {
 
@@ -155,7 +155,7 @@ double distanciaCuadradaKD(const pair<double, double> &a,
     return dx * dx + dy * dy;
 }
 
-// Busca la central mas cercana dentro del arbol.
+// busca la central mas cercana dentro del arbol
 void buscarKD(const vector<pair<double, double>> &puntos,
               const vector<NodoKD> &arbol,
               int nodo,
@@ -169,12 +169,12 @@ void buscarKD(const vector<pair<double, double>> &puntos,
 
     const NodoKD &actual = arbol[nodo];
 
-    // Calcular la distancia al punto actual.
+    // calcular la distancia al punto actual
     double distancia2 = distanciaCuadradaKD(
         puntos[actual.punto], consulta
     );
 
-    // Actualizar la mejor central encontrada.
+    // actualizar la mejor central encontrada
     if (mejorPunto == -1 ||
         distancia2 < mejorDistancia2 ||
         (distancia2 == mejorDistancia2 &&
@@ -184,7 +184,7 @@ void buscarKD(const vector<pair<double, double>> &puntos,
         mejorDistancia2 = distancia2;
     }
 
-    // Comparar la consulta con el eje actual.
+    // comparar la consulta con el eje actual
     double diferencia;
 
     if (actual.eje == 0) {
@@ -203,12 +203,12 @@ void buscarKD(const vector<pair<double, double>> &puntos,
         lejano = actual.izquierdo;
     }
 
-    // Buscar primero en la rama mas cercana.
+    // buscar primero en la rama mas cercana
     buscarKD(puntos, arbol, cercano, consulta,
              mejorPunto, mejorDistancia2);
 
-    // Revisar la otra rama solo si puede tener
-    // una central igual o mas cercana.
+    // revisar la otra rama solo si puede tener
+    // una central igual o mas cercana
     if (diferencia * diferencia <= mejorDistancia2) {
 
         buscarKD(puntos, arbol, lejano, consulta,
@@ -216,7 +216,7 @@ void buscarKD(const vector<pair<double, double>> &puntos,
     }
 }
 
-// Encuentra la central mas cercana a la nueva ubicacion.
+// encuentra la central mas cercana a la nueva ubicacion
 inline int nearestCentralKDTree(
     const vector<pair<double, double>> &centrales,
     const pair<double, double> &newCentral,
@@ -229,7 +229,7 @@ inline int nearestCentralKDTree(
         return -1;
     }
 
-    // Crear una lista con los indices de las centrales.
+    // crear una lista con los indices de las centrales
     vector<int> orden(n);
 
     for (int i = 0; i < n; i++) {
@@ -241,7 +241,7 @@ inline int nearestCentralKDTree(
 
     arbol.reserve(n);
 
-    // Construir el KD-Tree.
+    // construir el KD-Tree
     int raiz = construirKD(
         centrales, orden, auxiliar, arbol,
         0, n, 0
@@ -250,13 +250,13 @@ inline int nearestCentralKDTree(
     int mejorPunto = -1;
     double mejorDistancia2 = 0;
 
-    // Buscar la central mas cercana.
+    // buscar la central mas cercana
     buscarKD(
         centrales, arbol, raiz, newCentral,
         mejorPunto, mejorDistancia2
     );
 
-    // Convertir la distancia al cuadrado a distancia real.
+    // convertir la distancia al cuadrado a distancia real
     distance = sqrt(mejorDistancia2);
 
     return mejorPunto;

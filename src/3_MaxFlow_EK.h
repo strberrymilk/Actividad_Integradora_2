@@ -5,7 +5,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Busca un camino disponible utilizando BFS.
+// busca un camino disponible utilizando BFS
 bool buscarCaminoEK(const vector<vector<long long>> &residual,
                     const vector<vector<int>> &vecinos,
                     int origen,
@@ -16,7 +16,7 @@ bool buscarCaminoEK(const vector<vector<long long>> &residual,
 
     padre.assign(n, -1);
 
-    // Cola implementada manualmente.
+    // cola implementada manualmente
     vector<int> cola(n);
 
     int primero = 0;
@@ -32,24 +32,24 @@ bool buscarCaminoEK(const vector<vector<long long>> &residual,
         int actual = cola[primero];
         primero++;
 
-        // Revisar los vecinos del nodo actual.
+        // revisar los vecinos del nodo actual
         for (int i = 0; i < (int)vecinos[actual].size(); i++) {
 
             int siguiente = vecinos[actual][i];
 
-            // Evitar visitar nuevamente el mismo nodo.
+            // evitar visitar nuevamente el mismo nodo
             if (padre[siguiente] != -1) {
                 continue;
             }
 
-            // Solo recorrer conexiones con capacidad disponible.
+            // solo recorrer conexiones con capacidad disponible
             if (residual[actual][siguiente] <= 0) {
                 continue;
             }
 
             padre[siguiente] = actual;
 
-            // Se encontro un camino hasta el destino.
+            // se encontro un camino hasta el destino
             if (siguiente == destino) {
                 return true;
             }
@@ -62,13 +62,13 @@ bool buscarCaminoEK(const vector<vector<long long>> &residual,
     return false;
 }
 
-// Calcula el flujo maximo usando Edmonds-Karp.
+// calcula el flujo maximo usando Edmonds-Karp
 inline int maxFlowEdmondsKarp(const vector<vector<int>> &capacity,
                              int n,
                              int source,
                              int sink) {
 
-    // Verificar que los nodos sean validos.
+    // verificar que los nodos sean validos
     if (n <= 0 || source < 0 || sink < 0 ||
         source >= n || sink >= n) {
         return 0;
@@ -78,7 +78,7 @@ inline int maxFlowEdmondsKarp(const vector<vector<int>> &capacity,
         return 0;
     }
 
-    // Crear una copia de la matriz de capacidades.
+    // crear una copia de la matriz de capacidades
     vector<vector<long long>> residual(
         n, vector<long long>(n, 0)
     );
@@ -92,7 +92,7 @@ inline int maxFlowEdmondsKarp(const vector<vector<int>> &capacity,
         }
     }
 
-    // Guardar los vecinos de cada nodo.
+    // guardar los vecinos de cada nodo
     vector<vector<int>> vecinos(n);
 
     for (int i = 0; i < n; i++) {
@@ -108,14 +108,14 @@ inline int maxFlowEdmondsKarp(const vector<vector<int>> &capacity,
     long long flujoTotal = 0;
     vector<int> padre;
 
-    // Buscar caminos mientras exista capacidad disponible.
+    // buscar caminos mientras exista capacidad disponible
     while (buscarCaminoEK(residual, vecinos,
                           source, sink, padre)) {
 
         long long cuello = LLONG_MAX;
         int actual = sink;
 
-        // Encontrar la capacidad minima del camino.
+        // encontrar la capacidad minima del camino
         while (actual != source) {
 
             int anterior = padre[actual];
@@ -127,17 +127,17 @@ inline int maxFlowEdmondsKarp(const vector<vector<int>> &capacity,
             actual = anterior;
         }
 
-        // Actualizar las capacidades residuales.
+        // actualizar las capacidades residuales
         actual = sink;
 
         while (actual != source) {
 
             int anterior = padre[actual];
 
-            // Restar el flujo enviado.
+            // restar el flujo enviado
             residual[anterior][actual] -= cuello;
 
-            // Agregar capacidad en la direccion inversa.
+            // agregar capacidad en la direccion inversa
             residual[actual][anterior] += cuello;
 
             actual = anterior;
@@ -146,7 +146,7 @@ inline int maxFlowEdmondsKarp(const vector<vector<int>> &capacity,
         flujoTotal += cuello;
     }
 
-    // La funcion debe devolver un entero.
+    // la funcion debe devolver un entero
     if (flujoTotal > INT_MAX) {
         return -1;
     }
